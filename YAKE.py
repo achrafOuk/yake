@@ -8,14 +8,14 @@ from termScore import TermScore
 from statistics import median,mean,stdev
 from jellyfish import jaro_similarity
 from helper import helper
-"""YAKE keyphrase extraction model.
-Statistical approach to keyphrase extraction described in:
-* Ricardo Campos, Vítor Mangaravite, Arian Pasquali, Alípio Mário Jorge,
-  Célia Nunes and Adam Jatowt.
-  YAKE! Keyword extraction from single documents using multiple local features.
-  *Information Sciences*, pages 257-289, 2020.
+
 """
-class yake(helper):
+    YAKE keyphrase extraction model.
+    Statistical approach to keyphrase extraction described in:
+    *Ricardo Campos, Vítor Mangaravite, Arian Pasquali, Alípio Mário Jorge, Célia Nunes and Adam Jatowt.
+    YAKE! Keyword extraction from single documents using multiple local features. *Information Sciences*, pages 257-289, 2020.
+"""
+class YAKE(helper):
     """
     @:param:
     text
@@ -123,10 +123,16 @@ class yake(helper):
                 Tfa = self.terms[word].TF_a
                 TfU = self.terms[word].TF_U
                 TF = self.terms[word].TF
-                self.termsCalcule[word].TCase = max(Tfa, TfU) / 1 + math.log(TF)
+                try:
+                    self.termsCalcule[word].TCase = max(Tfa, TfU) / 1 + math.log(TF)
+                except:
+                    self.termsCalcule[word].TCase = 0
                 #print(word,self.termsCalcule[word].TCase)
                 self.termsCalcule[word].TPos = math.log(3 + median( self.getPosIndexSents(sentencesL, word ) ))
-                self.termsCalcule[word].TFNorm = self.terms[word].TF / (avgTF + stdTF)
+                try:
+                    self.termsCalcule[word].TFNorm = self.terms[word].TF / (avgTF + stdTF)
+                except:
+                    self.termsCalcule[word].TFNorm = 0
                 self.termsCalcule[word].TSent = len( self.getPosIndexSents(sentencesL, word )) / len(sent_tokenize(self.text))
                 try:
                     DL = self.calcule_DL(self.cooccur,self.cooccur(word))[1]/self.calcule_DL(self.cooccur,self.cooccur(word))[0]
@@ -136,7 +142,10 @@ class yake(helper):
                     DR = self.calcule_DR(self.cooccur, self.cooccur(word))[1] / self.calcule_DR(self.cooccur, self.cooccur(word))[0]
                 except:
                     DR =0
-                self.termsCalcule[word].TRel = 1+(DL+DR) * ( self.terms[word].TF / maxTF )
+                try:
+                    self.termsCalcule[word].TRel = 1+(DL+DR) * ( self.terms[word].TF / maxTF )
+                except:
+                    self.termsCalcule[word].TRel = 0
 
     def term_score(self):
         for word in self.tokens:
@@ -207,7 +216,10 @@ class yake(helper):
                 occurance += 1
             if term1 in chunck and term2 in chunck and abs(chunck.index(term2) - chunck.index(term1)) == 1:
                 cooccure += 1
-        return cooccure / occurance
+        try:
+            return cooccure / occurance
+        except:
+            return 0
 
     def candidate_keyword_score(self):
         for candidats in self.candidateKeywords:
@@ -230,11 +242,12 @@ class yake(helper):
                         BigramProbability = 0
                     prod_S *= 1 + (1 - BigramProbability)
                     sum_S -= (1 - BigramProbability)
-                self.candidateKeywords[candidats].Score = prod_S / (self.candidateKeywords[candidats].KF * (sum_S + 1))
+                try:
+                    self.candidateKeywords[candidats].Score = prod_S / (self.candidateKeywords[candidats].KF * (sum_S + 1))
+                except:
+                    self.candidateKeywords[candidats].Score = 0
 
         self.candidateKeywords = sorted(self.candidateKeywords.items(), key=lambda k: k[1].Score)
-        for i in self.candidateKeywords:
-            print(i[0],i[1].Score)
     def word_deduplication(self,threshold=.8):
         keywords = []
 
@@ -250,7 +263,7 @@ class yake(helper):
                     break
             if not skip:
                 keywords.append(candidate[0])
-        print(keywords)
+        #print(keywords)
         #print( sorted([x[0] for x in self.candidateKeywords if x[0] in keywords], key=lambda k:k))
         return sorted([x[0] for x in self.candidateKeywords if x[0] in keywords], key=lambda k:k)
 
@@ -266,5 +279,7 @@ class yake(helper):
         if len(keywords)>n:
             return keywords[:]
         return keywords[:n]
+
+
 
 
