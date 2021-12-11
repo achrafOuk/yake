@@ -1,12 +1,15 @@
 ## yake
- This project aims to automaticlly extract keywords from a website that it does not have them by default using YAKE! algorithm.
+ YAKE is unsupervised algorithm that can retrieve the best word for the content of a page to be keywords.
 ## Installing dependencies
-To install the dependencies of the project using pip.
+Run the commands to clone the project and install the dependencies of the project using pip.
 ```shell
+git clone https://github.com/achrafOuk/yake
+cd yake
 pip install requirements.txt
 ```
 ## Citation
-Citation of the original paper.
+
+This project is the implimentation of the paper:
 ```
 @article{campos2020yake,
   title={YAKE! Keyword extraction from single documents using multiple local features},
@@ -17,4 +20,9 @@ Citation of the original paper.
   year={2020},
   publisher={Elsevier}
 }
+```
+## Run the code
+The main file of the code is:
+```
+yake.py
 ```
