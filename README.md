@@ -1,5 +1,5 @@
 ## yake
- YAKE is unsupervised algorithm that can retrieve the best word for the content of a page to be keywords.
+ YAKE is unsupervised learning-to-rank algorithm that can find the best condidats words to become keywords of text webpage.
 ## Installing dependencies
 Run the commands to clone the project and install the dependencies of the project using pip.
 ```shell
